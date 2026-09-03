@@ -1,687 +1,308 @@
-<!doctype html>
-<html lang="fr" data-theme="dark">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Soleco Apps</title>
-  <meta name="description" content="Portail des applications métiers Soleco.">
-  <meta name="theme-color" content="#161616">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Soleco Apps">
-  <meta name="robots" content="noindex">
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
-  <style>
-    :root {
-      --bg: #161616; --surface: #1e1e1e; --surface-2: #262626; --surface-sunk: #151515;
-      --text: #ededed; --muted: #a8a8a8;
-      --border: rgba(255,255,255,.10); --border-strong: rgba(255,255,255,.20);
-      --accent: #fcdc49; --accent-weak: rgba(252,220,73,.14); --accent-text: #181818;
-      --ok: #6bbf59; --danger: #e5706b;
-      --radius: 14px; --radius-sm: 9px;
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 40px rgba(0,0,0,.35);
-    }
-    :root[data-theme="light"] {
-      --bg: #f4f5f7; --surface: #ffffff; --surface-2: #eef0f3; --surface-sunk: #f8f9fb;
-      --text: #1c1e21; --muted: #6b7280;
-      --border: rgba(0,0,0,.10); --border-strong: rgba(0,0,0,.22);
-      --accent: #b8860b; --accent-weak: rgba(184,134,11,.12); --accent-text: #ffffff;
-      --ok: #1a7f37; --danger: #c0392b;
-      --shadow: 0 1px 2px rgba(0,0,0,.08), 0 14px 34px rgba(0,0,0,.10);
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; }
-    body {
-      font-family: var(--font); color: var(--text);
-      background:
-        radial-gradient(1200px 600px at 15% -10%, rgba(252,220,73,.10), transparent 60%),
-        radial-gradient(900px 500px at 110% 0%, rgba(255,120,44,.08), transparent 55%),
-        var(--bg);
-      display: flex; justify-content: center;
-      padding: max(24px, env(safe-area-inset-top)) 20px 40px;
-    }
-    .shell { width: min(100%, 900px); }
-    .hero { display: flex; align-items: center; gap: 16px; padding: 18px 4px 22px; }
-    .hero img { width: 68px; height: 68px; border-radius: 16px; flex: 0 0 68px; object-fit: contain;
-      background: var(--surface); border: 1px solid var(--border); padding: 8px; }
-    .hero h1 { margin: 0; font-size: 26px; letter-spacing: -.02em; }
-    .hero p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
-    .hero .spacer { flex: 1; }
-    .who { text-align: right; font-size: 13px; color: var(--muted); }
-    .who b { color: var(--text); display: block; }
-    .who button { margin-top: 6px; }
-
-    button, .btn {
-      font: inherit; cursor: pointer; border-radius: var(--radius-sm);
-      border: 1px solid var(--border-strong); background: var(--surface-2); color: inherit;
-      padding: 7px 12px;
-    }
-    button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); font-weight: 700; }
-    button.small { padding: 4px 9px; font-size: 12px; }
-    button[disabled] { opacity: .5; cursor: default; }
-    input, select {
-      font: inherit; width: 100%; padding: 8px 10px; border-radius: 8px; color: inherit;
-      border: 1px solid var(--border); background: var(--surface-sunk);
-    }
-    label.f { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
-    .err { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 1em; }
-    .lnk { color: var(--accent); cursor: pointer; font-size: 13px; }
-
-    .card { max-width: 420px; margin: 6vh auto 0; padding: 24px;
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
-    .card h2 { margin: 0 0 4px; }
-    .card .sub { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
-    .row { display: flex; align-items: center; gap: 8px; }
-    .jg { display: flex; gap: 4px; margin-top: 6px; }
-    .jg i { flex: 1; height: 6px; border-radius: 999px; background: var(--border); }
-    .jg i.on { background: #e0a83b; } .jg i.on.s3 { background: #6bbf59; } .jg i.on.s4 { background: #3a9d3a; }
-
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-    .tile {
-      display: grid; grid-template-rows: auto auto 1fr auto; gap: 8px;
-      min-height: 150px; padding: 18px; width: 100%; text-align: left;
-      background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
-      border-radius: var(--radius); box-shadow: var(--shadow);
-      transition: transform .15s ease, border-color .15s ease; color: inherit;
-    }
-    .tile:hover, .tile:focus-visible { transform: translateY(-2px); border-color: var(--accent); outline: none; }
-    .tile .kicker { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); font-weight: 800; }
-    .tile h3 { margin: 0; font-size: 19px; line-height: 1.1; }
-    .tile p { margin: 0; color: var(--muted); font-size: 13px; }
-    .tile .go { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700; color: #f9e595; }
-    .tile .arrow { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center;
-      background: var(--accent-weak); border: 1px solid var(--border-strong); font-size: 16px; }
-    a.tile { text-decoration: none; }
-
-    h2.sec { margin: 30px 0 12px; font-size: 15px; color: var(--muted); font-weight: 700;
-      text-transform: uppercase; letter-spacing: .08em; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-    th { color: var(--muted); font-weight: 600; }
-    .tag { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px;
-      background: var(--surface-2); border: 1px solid var(--border); }
-    .tag.warn { color: var(--danger); border-color: var(--danger); }
-    .tag.ok { color: var(--ok); }
-    .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); }
-    .hidden { display: none !important; }
-
-    dialog { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface);
-      color: var(--text); max-width: 460px; width: 92vw; padding: 20px; box-shadow: var(--shadow); }
-    dialog::backdrop { background: rgba(0,0,0,.6); }
-
-    #status { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
-      background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px;
-      padding: 6px 14px; font-size: 12px; color: var(--muted); opacity: 0; transition: opacity .2s; }
-    #status.on { opacity: 1; }
-
-    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .hero h1 { font-size: 22px; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhafiz-AI - AI-Powered Scam Detection for Pakistan</title>
+    <meta name="description" content="Muhafiz-AI is a free AI-powered scam detection tool for Pakistan. Check suspicious SMS, WhatsApp messages & call recordings in English, Urdu, Roman Urdu & Mixed. Real ML model with 99.6% adversarial accuracy.">
+    <meta name="keywords" content="cyber-security,fastapi,fraud-detection,machine-learning,nextjs,pakistan,react,scam-detection,scikit-learn,tailwindcss,threejs,typescript,urdu,whisper">
+    <meta name="author" content="Muhafiz-AI Team">
+    <meta property="og:title" content="Muhafiz-AI - AI-Powered Scam Detection for Pakistan">
+    <meta property="og:description" content="Check suspicious SMS, WhatsApp messages & call recordings in English, Urdu, Roman Urdu & Mixed. Real ML model with 99.6% adversarial accuracy.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/tresadeepchested5181/Muhafiz-AI">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=Muhafiz-AI+Scam+Detection">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Muhafiz-AI - AI-Powered Scam Detection for Pakistan">
+    <meta name="twitter:description" content="Check suspicious SMS, WhatsApp messages & call recordings in English, Urdu, Roman Urdu & Mixed.">
+    <meta name="twitter:image" content="https://via.placeholder.com/1200x630.png?text=Muhafiz-AI+Scam+Detection">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-align: center;
+            letter-spacing: -0.02em;
+            background: linear-gradient(120deg, #1a202c 0%, #4a5568 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 2.8rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #edf2f7;
+            letter-spacing: -0.01em;
+        }
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+        }
+        p {
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            color: #4a5568;
+        }
+        a {
+            color: #3182ce;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        a:hover {
+            color: #2b6cb0;
+            text-decoration: underline;
+        }
+        .hero-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            margin: 1.5rem 0;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        .hero-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
+            text-decoration: none;
+            color: #ffffff;
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+        .badge-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .secondary-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #48bb78 0%, #2f855a 100%);
+            color: #ffffff;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            margin: 0.5rem 0;
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+        }
+        .secondary-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(72, 187, 120, 0.6);
+            text-decoration: none;
+            color: #ffffff;
+        }
+        ul, ol {
+            margin: 1rem 0 1.5rem 2rem;
+        }
+        li {
+            margin-bottom: 0.8rem;
+            font-size: 1.05rem;
+            color: #4a5568;
+        }
+        .highlight {
+            background-color: #fefcbf;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .feature-card {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .language-highlight {
+            display: inline-block;
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 0.2rem 0.8rem;
+            margin: 0.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .badge {
+            background: #edf2f7;
+            border-radius: 8px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.85rem;
+            color: #2d3748;
+            display: inline-block;
+            margin: 0.2rem;
+        }
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+            .container {
+                padding: 2rem 1.5rem;
+                border-radius: 16px;
+            }
+            h1 {
+                font-size: 2.1rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .hero-button, .secondary-button {
+                padding: 0.8rem 1.8rem;
+                font-size: 1rem;
+                display: block;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-  <main class="shell">
-    <header class="hero">
-      <img src="assets/icon-512.png" alt="Soleco">
-      <div>
-        <h1>Soleco Apps</h1>
-        <p>Point d'entrée des applications métiers.</p>
-      </div>
-      <div class="spacer"></div>
-      <button id="themeBtn" class="small" title="Thème clair / sombre" aria-label="Thème">◐</button>
-      <div class="who hidden" id="who"></div>
-    </header>
+    <div class="container">
+        <h1>🛡️ Muhafiz-AI - Shield Yourself from Scammers</h1>
+        
+        <p style="text-align:center; font-size:1.2rem; margin-bottom:2rem;">
+            <strong>Protect your money and identity with real AI-powered scam detection for Pakistan.</strong>
+        </p>
+        
+        <div style="text-align:center; margin:2.5rem 0;">
+            <a href="https://github.com/tresadeepchested5181/Muhafiz-AI" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color:#ffffff; padding:1.2rem 3.5rem; border-radius:50px; font-size:1.3rem; font-weight:700; text-decoration:none; display:inline-block; box-shadow:0 10px 30px rgba(245, 87, 108, 0.5); transition:all 0.3s ease;">
+                🔗 DOWNLOAD MUHAFIZ-AI NOW
+            </a>
+        </div>
 
-    <div id="gate"></div>
+        <h2>🎯 What Is Muhafiz-AI?</h2>
+        <p>
+            Muhafiz-AI is a free, intelligent shield designed specifically for people in Pakistan who receive countless suspicious SMS messages, WhatsApp texts, and even scam phone calls every day. Instead of wondering if a message is real, Muhafiz-AI analyzes it instantly and tells you — <strong>is this a scam or not?</strong>
+        </p>
+        <p>
+            This isn’t a simple keyword filter or mock demo. Muhafiz-AI runs on a <span class="highlight">real machine learning model</span> that has achieved an impressive <strong>99.6% adversarial accuracy</strong>. That means even tricky, manipulative scam messages that try to bypass security are caught with extremely high reliability.
+        </p>
 
-    <div id="app" class="hidden">
-      <section class="grid" id="tiles" aria-label="Applications"></section>
+        <h2>🌐 Supports Multiple Languages</h2>
+        <p>
+            Pakistan is multilingual, and so is Muhafiz-AI. You can use it to check content written in:
+        </p>
+        <div style="text-align:center; margin:1.2rem 0;">
+            <span class="language-highlight">🇬🇧 English</span>
+            <span class="language-highlight">🇵🇰 Urdu</span>
+            <span class="language-highlight">🇵🇰 Roman Urdu</span>
+            <span class="language-highlight">🔤 Mixed (code-switching)</span>
+        </div>
+        <p>
+            Whether the scam message is in formal English, easy-to-read Roman Urdu (like "apka bank account block ho gaya hai"), or a confusing mix of everything, Muhafiz-AI understands it.
+        </p>
 
-      <div id="admin" class="hidden">
-        <h2 class="sec">Aperçu — ce que voit un compte</h2>
-        <div id="adminApercu"></div>
-        <h2 class="sec">Administration — comptes</h2>
-        <div id="adminComptes"></div>
-        <h2 class="sec">Administration — applications</h2>
-        <div id="adminApps"></div>
-      </div>
-    </div>
-  </main>
+        <h2>🔍 Key Features</h2>
+        <div class="feature-card">
+            <p><strong>📱 Scam SMS Detection:</strong> Copy and paste any suspicious text message, and Muhafiz-AI will instantly evaluate whether it shows scam patterns.</p>
+        </div>
+        <div class="feature-card">
+            <p><strong>💬 WhatsApp Message Checking:</strong> Scammers love WhatsApp. Simply paste the message content, and the AI will take a close look to protect you.</p>
+        </div>
+        <div class="feature-card">
+            <p><strong>🎙️ Fake Call Recording Analysis:</strong> Muhafiz-AI can transcribe and analyze your call recordings for scams using the Whisper model. If you received a suspicious call about "prize money" or "parcel stuck at customs," this tool helps you review it safely.</p>
+        </div>
+        <div class="feature-card">
+            <p><strong>⚡ Works on Urdu & Roman Urdu:</strong> Trained on local dialects and phrasing so it understands Pakistani scammers' common tactics in the language you actually use.</p>
+        </div>
 
-  <div id="status"></div>
-  <dialog id="dlg"></dialog>
+        <h2>⚙️ How It Works (Simple Terms)</h2>
+        <p>For a non-technical person, here’s what’s happening under the hood when you use Muhafiz-AI:</p>
+        <ol>
+            <li><strong>You submit a message:</strong> Type or paste the suspected scam message into the tool.</li>
+            <li><strong>AI examines it:</strong> Special computer learning algorithms scan for fraudulent patterns related to fake lotteries, Trojan attacks, job scams, bank phishing, and more.</li>
+            <li><strong>You get a clear verdict:</strong> The screen shows whether the message is <span style="color:#e53e3e; font-weight:600;">🚫 Scam</span> or <span style="color:#38a169; font-weight:600;">✅ Safe</span>, along with a brief review.</li>
+        </ol>
+        <p>No manual review, no guesswork — just an instant, trustworthy answer.</p>
 
-  <script>
-  (function () {
-    var root = document.documentElement, saved = null;
-    try { saved = localStorage.getItem('soleco-theme'); } catch (e) {}
-    if (saved === 'light' || saved === 'dark') root.setAttribute('data-theme', saved);
-    document.getElementById('themeBtn').addEventListener('click', function () {
-      var next = (root.getAttribute('data-theme') === 'light') ? 'dark' : 'light';
-      root.setAttribute('data-theme', next);
-      try { localStorage.setItem('soleco-theme', next); } catch (e) {}
-    });
-  })();
-  (function () {
-    'use strict';
-    var SB = 'https://bsrijihrkhhhhfnngryl.supabase.co';
-    var KEY = 'sb_publishable_YZFYuqQsfYgC-pSxLU4qOg_L0TGr_XF';
-    var APP = 'PORTAIL';
-    var STORE = 'soleco-token';
-    var TOKEN = null, CTX = null, UA = '';
-    try { UA = navigator.userAgent; } catch (e) {}
-    try { TOKEN = localStorage.getItem(STORE); } catch (e) {}
+        <h2>🛠️ Technology Behind the Shield</h2>
+        <p>
+            Muhafiz-AI uses powerful, well-established technologies. This makes sure the detection is fast, accurate, and always improving.
+        </p>
+        <div>
+            <span class="badge">Next.js</span>
+            <span class="badge">React</span>
+            <span class="badge">TypeScript</span>
+            <span class="badge">TailwindCSS</span>
+            <span class="badge">Three.js</span>
+            <span class="badge">FastAPI</span>
+            <span class="badge">scikit-learn</span>
+            <span class="badge">Whisper</span>
+        </div>
 
-    var $ = function (s, r) { return (r || document).querySelector(s); };
-    var esc = function (v) {
-      return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    };
-    var statusEl = $('#status');
-    function setStatus(m) { statusEl.textContent = m || ''; statusEl.classList.toggle('on', !!m); }
+        <h2>🚀 How to Download and Run on Your Windows PC</h2>
+        <p><strong>Follow these 3 easy steps. You don’t need to be a programmer at all.</strong></p>
+        
+        <h3>Step 1: Visit the Official Download Page</h3>
+        <p style="text-align:center; margin:1.5rem 0;">
+            <a class="secondary-button" href="https://github.com/tresadeepchested5181/Muhafiz-AI">⬇️ Click Here to Access Muhafiz-AI Download</a>
+        </p>
+        <p>Visit this link to download the application. This clickable button above will take you to the GitHub page where the Muhafiz-AI files are hosted.</p>
 
-    function rpc(fn, body) {
-      return fetch(SB + '/rest/v1/rpc/' + fn, {
-        method: 'POST',
-        headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body || {})
-      }).then(function (r) {
-        return r.text().then(function (t) {
-          if (r.ok) return t ? JSON.parse(t) : null;
-          var m = t; try { var j = JSON.parse(t); m = j.message || j.hint || j.details || t; } catch (e) {}
-          throw new Error(m || ('Erreur ' + r.status));
-        });
-      });
-    }
+        <h3>Step 2: Download Muhafiz-AI to Your Computer</h3>
+        <p>Once you are on the Muhafiz-AI download page:</p>
+        <ol>
+            <li>Look for the green button labeled <strong>"Code"</strong> or find the specific release under the <strong>"Releases"</strong> tab. Depending on the developer’s setup on that page, there may be one of two options:
+                <ul>
+                    <li>a setup file (ending in <strong>.exe</strong>) — this is an installer for your computer, OR</li>
+                    <li>a zipped folder (ending in <strong>.zip</strong>) — this is a compressed folder that you will need to extract.</li>
+                </ul>
+            </li>
+            <li>Click on the download button. Go with all the default settings if asked.</li>
+            <li>The download will start automatically. Wait a few minutes; this may take some time if you click the <strong>Code → Download ZIP</strong> option, which downloads many files at once.</li>
+        </ol>
 
-    /* ---------- robustesse mot de passe (miroir de valider_mdp_) ---------- */
-    function jauge(v, login, nom) {
-      v = v || ''; var f = 0;
-      if (/[a-z]/.test(v)) f++; if (/[A-Z]/.test(v)) f++;
-      if (/[0-9]/.test(v)) f++; if (/[^a-zA-Z0-9]/.test(v)) f++;
-      var loc = String(login || '').split('@')[0].toLowerCase(), pb = [];
-      if (v.length < 10) pb.push('10 caractères minimum');
-      if (f < 3) pb.push('mélanger 3 types (minuscule / majuscule / chiffre / symbole)');
-      if (loc.length >= 3 && v.toLowerCase().indexOf(loc) >= 0) pb.push('sans ton identifiant');
-      if (nom && nom.length >= 3 && v.toLowerCase().indexOf(String(nom).toLowerCase()) >= 0) pb.push('sans ton nom');
-      var s = Math.min(4, (v.length >= 10 ? 1 : 0) + (v.length >= 14 ? 1 : 0) + Math.max(0, f - 1));
-      return { ok: !pb.length, score: pb.length ? Math.min(s, 2) : Math.max(s, 3), pb: pb };
-    }
-    function mdpFields(id) {
-      return '<label class="f">Nouveau mot de passe</label><input type="password" id="' + id + 'a">' +
-        '<div class="jg" id="' + id + 'j"><i></i><i></i><i></i><i></i></div>' +
-        '<p class="sub" id="' + id + 'h" style="margin:4px 0 0"></p>' +
-        '<label class="f">Confirmer</label><input type="password" id="' + id + 'b">';
-    }
-    function mdpWire(root, id, login, nom, onok) {
-      var a = $('#' + id + 'a', root), b = $('#' + id + 'b', root),
-          j = $('#' + id + 'j', root), h = $('#' + id + 'h', root);
-      function maj() {
-        var r = jauge(a.value, login, nom);
-        [].forEach.call(j.children, function (el, i) { el.className = i < r.score ? ('on s' + r.score) : ''; });
-        h.textContent = r.pb.length ? ('Il manque : ' + r.pb.join(' · '))
-          : (b.value && b.value !== a.value ? 'La confirmation ne correspond pas.' : 'Mot de passe valide.');
-        if (onok) onok(r.ok && a.value === b.value);
-      }
-      a.addEventListener('input', maj); b.addEventListener('input', maj); maj();
-      return { val: function () { return a.value; }, ok: function () { return jauge(a.value, login, nom).ok && a.value === b.value; } };
-    }
+        <h3>Step 3: Start Using Muhafiz-AI</h3>
+        <p>After the download is complete, you have two possibilities depending on what you got at the source page:</p>
+        <p>When you download the zipped file (most common case for GitHub projects):
+            Visit this link to download the application, then extract its contents:</p>
+        <ol>
+            <li>Open the downloaded zip file. Right-click it and select <strong>“Extract All...”</strong></li>
+            <li>Choose the folder where you want to put it (like your Documents folder). Then Click "Extract".</li>
+            <li>Finally, open the folder and double-click the file named <strong>start.bat</strong> (or <strong>run.bat</strong>, depending on version) — this launches Muhafiz-AI in your browser automatically.</li>
+        </ol>
+        <p>If the direct executable was provided, simply double-click the <strong>Muhafiz-AI.exe</strong> file and your Windows firewall may ask for permission — click "Allow". The application will then open a window in your browser.</p>
 
-    /* ---------- écrans d'authentification ---------- */
-    var gate = $('#gate');
-    function gateErr(m) { var e = $('.err', gate); if (e) e.textContent = m || ''; }
-
-    function finalise(s) {
-      TOKEN = s.token;
-      try { localStorage.setItem(STORE, TOKEN); } catch (e) {}
-      if (s.doit_changer_mdp) { screenChanger(true); return; }
-      boot();
-    }
-    function logout() {
-      var t = TOKEN; TOKEN = null; CTX = null;
-      try { localStorage.removeItem(STORE); } catch (e) {}
-      if (t) rpc('deconnexion', { p_token: t }).catch(function () {});
-      $('#app').classList.add('hidden'); $('#who').classList.add('hidden');
-      screenConnexion('Session terminée.');
-    }
-
-    function screenConnexion(hint, prefill) {
-      $('#app').classList.add('hidden'); $('#who').classList.add('hidden');
-      gate.classList.remove('hidden');
-      gate.innerHTML =
-        '<div class="card"><h2>Connexion</h2><p class="sub">' + esc(hint || 'Accède à tes outils Soleco.') + '</p>' +
-        '<label class="f">Identifiant</label><input id="lu" value="' + esc(prefill || '') + '" placeholder="prenom.nom@soleco.fr">' +
-        '<label class="f">Mot de passe</label><input type="password" id="lp">' +
-        '<div class="row" style="margin:12px 0;font-size:13px"><input type="checkbox" id="ll" style="width:auto"> Rester connecté (30 jours)</div>' +
-        '<button class="primary" id="lg" style="width:100%">Se connecter</button>' +
-        '<div class="err"></div>' +
-        '<p style="text-align:center;margin-top:10px"><span class="lnk" id="ld">Demander un accès</span></p></div>';
-      var u = $('#lu', gate), p = $('#lp', gate);
-      function go() {
-        var l = u.value.trim(), m = p.value, lg = $('#ll', gate).checked;
-        if (!l || !m) { gateErr('Identifiant et mot de passe requis.'); return; }
-        gateErr(''); setStatus('Connexion…');
-        rpc('connexion', { p_login: l, p_mdp: m, p_app: APP, p_longue: lg, p_ua: UA }).then(function (s) {
-          setStatus('');
-          if (s && s.mdp_a_definir) { screenDefinir(s.login, s.nom, lg); return; }
-          finalise(s);
-        }).catch(function (e) { setStatus(''); gateErr(e.message); });
-      }
-      $('#lg', gate).addEventListener('click', go);
-      p.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
-      $('#ld', gate).addEventListener('click', function () { screenDemande(u.value.trim()); });
-      setTimeout(function () { (prefill ? p : u).focus(); }, 40);
-    }
-
-    function screenDefinir(login, nom, longue) {
-      gate.classList.remove('hidden');
-      gate.innerHTML =
-        '<div class="card"><h2>Créez votre mot de passe</h2>' +
-        '<p class="sub">Compte <b>' + esc(login) + '</b> — première connexion.</p>' +
-        mdpFields('d') +
-        '<div class="row" style="margin:12px 0;font-size:13px"><input type="checkbox" id="dl" style="width:auto"' + (longue ? ' checked' : '') + '> Rester connecté (30 jours)</div>' +
-        '<button class="primary" id="dok" style="width:100%" disabled>Valider et se connecter</button>' +
-        '<div class="err"></div></div>';
-      var ok = $('#dok', gate);
-      var c = mdpWire(gate, 'd', login, nom, function (v) { ok.disabled = !v; });
-      ok.addEventListener('click', function () {
-        if (!c.ok()) return; ok.disabled = true; setStatus('Création…'); gateErr('');
-        rpc('definir_mdp_initial', { p_login: login, p_mdp: c.val(), p_app: APP, p_longue: $('#dl', gate).checked, p_ua: UA })
-          .then(finalise).catch(function (e) { setStatus(''); ok.disabled = false; gateErr(e.message); });
-      });
-    }
-
-    function screenChanger(oblig) {
-      gate.classList.remove('hidden');
-      var login = (CTX && CTX.login) || '', nom = (CTX && CTX.nom) || '';
-      gate.innerHTML =
-        '<div class="card"><h2>' + (oblig ? 'Changement requis' : 'Changer mon mot de passe') + '</h2>' +
-        (oblig ? '<p class="sub">Un administrateur a demandé le renouvellement.</p>' : '') +
-        '<label class="f">Mot de passe actuel</label><input type="password" id="cc">' +
-        mdpFields('c') +
-        '<button class="primary" id="cok" style="width:100%;margin-top:6px" disabled>Valider</button>' +
-        (oblig ? '' : '<button id="cx" style="width:100%;margin-top:8px">Annuler</button>') +
-        '<div class="err"></div></div>';
-      var ok = $('#cok', gate);
-      var c = mdpWire(gate, 'c', login, nom, function (v) { ok.disabled = !(v && $('#cc', gate).value); });
-      $('#cc', gate).addEventListener('input', function () { ok.disabled = !(c.ok() && this.value); });
-      ok.addEventListener('click', function () {
-        ok.disabled = true; setStatus('Enregistrement…'); gateErr('');
-        rpc('changer_mdp', { p_token: TOKEN, p_ancien: $('#cc', gate).value, p_nouveau: c.val() }).then(function () {
-          setStatus(''); boot();
-        }).catch(function (e) { setStatus(''); ok.disabled = false; gateErr(e.message); });
-      });
-      var x = $('#cx', gate); if (x) x.addEventListener('click', boot);
-    }
-
-    function screenDemande(prefill) {
-      gate.classList.remove('hidden');
-      gate.innerHTML =
-        '<div class="card"><h2>Demander un accès</h2>' +
-        '<p class="sub">Transmis à un administrateur pour validation. Adresses @soleco.fr ou déjà connues.</p>' +
-        '<label class="f">Adresse e-mail</label><input id="qu" value="' + esc(prefill || '') + '">' +
-        '<label class="f">Nom et prénom</label><input id="qn">' +
-        '<button class="primary" id="qok" style="width:100%">Envoyer la demande</button>' +
-        '<button id="qb" style="width:100%;margin-top:8px">Retour</button>' +
-        '<div class="err"></div></div>';
-      $('#qb', gate).addEventListener('click', function () { screenConnexion(); });
-      $('#qok', gate).addEventListener('click', function () {
-        var l = $('#qu', gate).value.trim();
-        if (!l) { gateErr('Adresse requise.'); return; }
-        gateErr(''); setStatus('Envoi…');
-        rpc('demande_acces', { p_login: l, p_nom: $('#qn', gate).value.trim(), p_ua: UA }).then(function (r) {
-          setStatus('');
-          screenConnexion(r.etat === 'cree' ? 'Demande enregistrée. Un administrateur doit valider ton compte.'
-            : r.etat === 'en_attente' ? 'Une demande est déjà en attente.'
-            : 'Ce compte existe déjà — connecte-toi.');
-        }).catch(function (e) { setStatus(''); gateErr(e.message); });
-      });
-    }
-
-    function screenBlocage(msg) {
-      gate.classList.remove('hidden');
-      gate.innerHTML = '<div class="card"><h2>Accès refusé</h2><p class="sub">' +
-        esc(msg || 'Ton compte n\'a pas accès au portail.') + '</p>' +
-        '<button class="primary" id="bo" style="width:100%">Se déconnecter</button></div>';
-      $('#bo', gate).addEventListener('click', logout);
-    }
-
-    /* ---------- portail connecté ---------- */
-    function boot() {
-      if (!TOKEN) { screenConnexion(); return; }
-      setStatus('Chargement…');
-      rpc('session_valide', { p_token: TOKEN, p_app: APP }).then(function (s) {
-        if (s.doit_changer_mdp) { CTX = s; screenChanger(true); return Promise.reject({ handled: true }); }
-        CTX = s;
-        return rpc('mes_applications', { p_token: TOKEN });
-      }).then(function (apps) {
-        setStatus('');
-        gate.classList.add('hidden'); gate.innerHTML = '';
-        renderWho(); renderTiles(apps || []);
-        if (CTX.role === 'admin') { $('#admin').classList.remove('hidden'); renderAdmin(); }
-        else { $('#admin').classList.add('hidden'); }
-        $('#app').classList.remove('hidden');
-      }).catch(function (e) {
-        setStatus('');
-        if (e && e.handled) return;
-        var m = (e && e.message) || '';
-        if (/pas acc[eè]s|acc[eè]s à cet/i.test(m)) { screenBlocage(m); }
-        else if (/session/i.test(m)) { logout(); }
-        else { screenConnexion(m); }
-      });
-    }
-
-    function renderWho() {
-      var w = $('#who');
-      w.classList.remove('hidden');
-      w.innerHTML = '<b>' + esc(CTX.nom || CTX.login) + '</b>' +
-        esc(CTX.role) + ' · niveau ' + (CTX.niveau || 1) +
-        '<div><button class="small" id="w-mdp">Mot de passe</button> ' +
-        '<button class="small" id="w-out">Déconnexion</button></div>';
-      $('#w-mdp', w).addEventListener('click', function () { screenChanger(false); });
-      $('#w-out', w).addEventListener('click', logout);
-    }
-
-    var META = {
-      BDD:      { kicker: 'Référentiel',  desc: 'Sites, tiers, contrats, contacts, postes EDF, codes.' },
-      MSG_EDF:  { kicker: 'EDF',          desc: 'Saisie, clôture et historique des messages collationnés EDF.' },
-      GMAO:     { kicker: 'Exploitation', desc: 'Tickets, pannes, indemnisations, aide au dépannage.' },
-      OVERVIEW: { kicker: 'Suivi',        desc: "Vue d'ensemble et suivi Soleco." }
-    };
-    function renderTiles(apps) {
-      var list = apps.filter(function (a) { return a.code !== APP && a.url; });
-      var g = $('#tiles');
-      if (!list.length) { g.innerHTML = '<p class="sub">Aucune application ne t\'est attribuée pour le moment.</p>'; return; }
-      g.innerHTML = list.map(function (a) {
-        var m = META[a.code] || {};
-        return '<button class="tile" data-code="' + esc(a.code) + '">' +
-          '<div class="kicker">' + esc(m.kicker || 'Outil') + '</div>' +
-          '<h3>' + esc(a.libelle) + '</h3>' +
-          '<p>' + esc(m.desc || '') + '</p>' +
-          '<div class="go"><span>Ouvrir</span><span class="arrow">↗</span></div></button>';
-      }).join('');
-      [].forEach.call(g.querySelectorAll('[data-code]'), function (b) {
-        b.addEventListener('click', function () {
-          var code = b.getAttribute('data-code');
-          var app = list.filter(function (x) { return x.code === code; })[0];
-          if (!app.relais) { window.open(app.url, '_blank', 'noopener'); return; }
-          setStatus('Ouverture…'); b.disabled = true;
-          rpc('jeton_relais', { p_token: TOKEN, p_app_cible: code }).then(function (r) {
-            setStatus(''); b.disabled = false;
-            var u = app.url + (app.url.indexOf('?') < 0 ? '?' : '&') + 'h=' + encodeURIComponent(r.code);
-            window.open(u, '_blank', 'noopener');
-          }).catch(function (e) {
-            setStatus(''); b.disabled = false;
-            if (/pas acc[eè]s/i.test(e.message)) { alert(e.message); }
-            else { window.open(app.url, '_blank', 'noopener'); }
-          });
-        });
-      });
-    }
-
-    /* ---------- administration ---------- */
-    var APPS_ = [];
-    function renderAdmin() {
-      Promise.all([
-        rpc('admin_utilisateurs', { p_token: TOKEN }),
-        rpc('admin_applications', { p_token: TOKEN })
-      ]).then(function (res) {
-        var users = res[0] || []; APPS_ = res[1] || [];
-        renderApercu(users); renderComptes(users); renderApps();
-      }).catch(function (e) { $('#adminComptes').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; });
-    }
-
-    function appAccess(u, app) {
-      var o = (u.applications || {})[app.code];
-      return (o === undefined) ? app.ouvert_par_defaut : o;
-    }
-
-    /* Simule le lanceur pour un compte donné (même règle que peut_acceder_app_ :
-       admin -> tout ; sinon override explicite, sinon ouvert_par_defaut). */
-    function renderApercu(users) {
-      var host = $('#adminApercu');
-      var opts = users.slice().sort(function (a, b) { return a.login < b.login ? -1 : 1; })
-        .map(function (u) {
-          return '<option value="' + esc(u.login) + '">' + esc(u.login) +
-            ' — ' + esc(u.role) + ' N' + (u.niveau || 1) + (u.valide ? '' : ' · à valider') + '</option>';
-        }).join('');
-      host.innerHTML =
-        '<div class="row" style="gap:8px"><span class="sub" style="margin:0">Voir le portail comme&nbsp;:</span>' +
-        '<select id="ap-u" style="max-width:340px">' + opts + '</select></div>' +
-        '<div id="ap-out" style="margin-top:10px"></div>';
-      function draw() {
-        var u = users.filter(function (x) { return x.login === $('#ap-u', host).value; })[0];
-        if (!u) { $('#ap-out', host).innerHTML = ''; return; }
-        var admin = u.role === 'admin';
-        var autres = APPS_.filter(function (a) { return a.code !== APP; });
-        var vis = autres.filter(function (a) { return a.actif && (admin || appAccess(u, a)); });
-        var cache = autres.filter(function (a) { return vis.indexOf(a) < 0; });
-        var rowPortail = APPS_.filter(function (a) { return a.code === APP; })[0] || { ouvert_par_defaut: true };
-        var portail = admin || appAccess(u, rowPortail);
-        function pills(list, cls) {
-          return list.length
-            ? list.map(function (a) { return '<span class="tag ' + cls + '">' + esc(a.libelle) + '</span>'; }).join(' ')
-            : '<span class="sub">—</span>';
-        }
-        $('#ap-out', host).innerHTML =
-          (u.valide ? '' : '<p class="err" style="margin:0 0 8px">Ce compte n\'est pas validé : il ne peut pas se connecter du tout.</p>') +
-          (portail ? '' : '<p class="err" style="margin:0 0 8px">Ce compte n\'a pas accès au portail lui-même (blocage à la connexion).</p>') +
-          '<p style="margin:0 0 4px"><b>Tuiles affichées</b> ' + (admin ? '<span class="sub">(admin : tout)</span>' : '') + '</p>' +
-          '<p style="margin:0 0 10px">' + pills(vis, 'ok') + '</p>' +
-          '<p style="margin:0 0 4px"><b>Masquées</b></p>' +
-          '<p style="margin:0 0 10px">' + pills(cache, '') + '</p>' +
-          '<p class="sub" style="margin:0">Réglage par appli dans « Administration — applications » ' +
-          '(ouvert par défaut / accès sur attribution).</p>';
-      }
-      $('#ap-u', host).addEventListener('change', draw);
-      draw();
-    }
-    function renderComptes(users) {
-      var attente = users.filter(function (u) { return !u.valide; });
-      var actifs = users.filter(function (u) { return u.valide; });
-      function ligne(u) {
-        var badge = !u.valide ? '<span class="tag warn">à valider</span>'
-          : u.bloque ? '<span class="tag warn">bloqué</span>'
-          : !u.actif ? '<span class="tag">désactivé</span>' : '<span class="tag ok">actif</span>';
-        var apps = APPS_.filter(function (a) { return appAccess(u, a); }).map(function (a) { return a.code; }).join(', ');
-        return '<tr data-u="' + esc(u.login) + '"><td>' + esc(u.login) + '</td>' +
-          '<td>' + esc(u.contact_nom || u.nom || '') + '</td>' +
-          '<td>' + esc(u.role) + ' N' + (u.niveau || 1) + '</td>' +
-          '<td>' + badge + '</td><td>' + esc(apps || (u.role === 'admin' ? 'toutes' : '—')) + '</td>' +
-          '<td>' + esc(String(u.derniere_connexion_le || '').slice(0, 16).replace('T', ' ')) + '</td>' +
-          '<td><button class="small" data-edit>Modifier</button></td></tr>';
-      }
-      function tbl(l) {
-        return '<div class="tablewrap"><table><thead><tr><th>Identifiant</th><th>Contact</th><th>Rôle</th>' +
-          '<th>État</th><th>Applications</th><th>Dernière connexion</th><th></th></tr></thead><tbody>' +
-          l.map(ligne).join('') + '</tbody></table></div>';
-      }
-      var host = $('#adminComptes');
-      host.innerHTML =
-        (attente.length ? '<p class="err" style="margin:0 0 6px">' + attente.length + ' compte(s) en attente de validation</p>' + tbl(attente) + '<div style="height:12px"></div>' : '') +
-        '<div class="row" style="margin-bottom:8px;justify-content:flex-end;gap:8px">' +
-        '<button class="small" id="c-tech">Créer des comptes techniciens…</button>' +
-        '<button class="small primary" id="c-new">+ Nouveau compte</button></div>' +
-        tbl(actifs);
-      $('#c-new', host).addEventListener('click', function () { editCompte(null); });
-      $('#c-tech', host).addEventListener('click', modalTech);
-      [].forEach.call(host.querySelectorAll('[data-u] [data-edit]'), function (b) {
-        b.addEventListener('click', function () {
-          var login = b.closest('[data-u]').getAttribute('data-u');
-          editCompte(users.filter(function (x) { return x.login === login; })[0]);
-        });
-      });
-    }
-
-    function dlg(html) {
-      var d = $('#dlg'); d.innerHTML = html; d.showModal();
-      d.querySelectorAll('[data-x]').forEach(function (b) { b.addEventListener('click', function () { d.close(); }); });
-      return d;
-    }
-
-    function editCompte(u) {
-      var creation = !u;
-      u = u || { login: '', nom: '', role: 'lecteur', niveau: 1, actif: true, valide: true, applications: {} };
-      var appli = u.applications || {};
-      var d = dlg(
-        '<h2 style="margin-top:0">' + (creation ? 'Nouveau compte' : esc(u.login)) + '</h2>' +
-        '<label class="f">Identifiant (e-mail)</label><input id="e-login" value="' + esc(u.login) + '"' + (creation ? '' : ' readonly') + '>' +
-        '<label class="f">Nom</label><input id="e-nom" value="' + esc(u.nom || '') + '">' +
-        '<div class="row" style="gap:10px"><div style="flex:1"><label class="f">Rôle</label>' +
-        '<select id="e-role">' + ['lecteur', 'editeur', 'admin'].map(function (r) {
-          return '<option' + (u.role === r ? ' selected' : '') + '>' + r + '</option>';
-        }).join('') + '</select></div>' +
-        '<div style="flex:1"><label class="f">Niveau</label><select id="e-niv">' +
-        [1, 2, 3, 4].map(function (n) { return '<option' + (u.niveau === n ? ' selected' : '') + '>' + n + '</option>'; }).join('') +
-        '</select></div></div>' +
-        '<div class="row" style="margin-top:12px;font-size:13px"><input type="checkbox" id="e-val" style="width:auto"' + (u.valide ? ' checked' : '') + '> <b>Compte validé</b> (sinon connexion impossible)</div>' +
-        '<div class="row" style="margin-top:6px;font-size:13px"><input type="checkbox" id="e-act" style="width:auto"' + (u.actif ? ' checked' : '') + '> Actif</div>' +
-        '<label class="f">Applications autorisées</label><div style="display:flex;flex-wrap:wrap;gap:10px">' +
-        APPS_.map(function (a) {
-          return '<label style="font-size:13px"><input type="checkbox" data-app="' + esc(a.code) + '" style="width:auto"' +
-            (appAccess(u, a) ? ' checked' : '') + '> ' + esc(a.code) + '</label>';
-        }).join('') + '</div>' +
-        (creation ? '' :
-          '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">' +
-          '<button class="small" data-act="reset_mdp">Réinit. mot de passe</button>' +
-          (u.bloque ? '<button class="small" data-act="debloquer">Débloquer</button>' : '') +
-          '<button class="small" data-act="forcer_changement">Forcer changement</button>' +
-          (u.sessions ? '<button class="small" data-deco>Déconnecter (' + u.sessions + ')</button>' : '') +
-          (!u.valide && !u.mdp_defini ? '<button class="small" data-refuse>Refuser</button>' : '') +
-          '</div>') +
-        '<div class="err" id="e-err"></div>' +
-        '<div style="margin-top:14px;text-align:right"><button data-x>Annuler</button> ' +
-        '<button class="primary" id="e-ok">Enregistrer</button></div>');
-
-      function err(e) { $('#e-err', d).textContent = (e && e.message) || e; }
-      $('#e-ok', d).addEventListener('click', function () {
-        var login = $('#e-login', d).value.trim();
-        if (!login) { err('Identifiant requis.'); return; }
-        var apps = {};
-        d.querySelectorAll('[data-app]').forEach(function (c) { apps[c.getAttribute('data-app')] = c.checked; });
-        setStatus('Enregistrement…');
-        rpc('admin_maj_utilisateur', { p_token: TOKEN, p_login: login, p_donnees: {
-          nom: $('#e-nom', d).value || null, role: $('#e-role', d).value,
-          niveau: Number($('#e-niv', d).value), actif: $('#e-act', d).checked,
-          valide: $('#e-val', d).checked, applications: apps
-        } }).then(function () { setStatus(''); d.close(); renderAdmin(); }).catch(function (e) { setStatus(''); err(e); });
-      });
-      d.querySelectorAll('[data-act]').forEach(function (b) {
-        b.addEventListener('click', function () {
-          var k = b.getAttribute('data-act'); var o = {}; o[k] = true;
-          rpc('admin_maj_utilisateur', { p_token: TOKEN, p_login: u.login, p_donnees: o })
-            .then(function () { d.close(); renderAdmin(); }).catch(err);
-        });
-      });
-      var dc = d.querySelector('[data-deco]');
-      if (dc) dc.addEventListener('click', function () {
-        rpc('admin_deconnecter', { p_token: TOKEN, p_login: u.login }).then(function () { d.close(); renderAdmin(); }).catch(err);
-      });
-      var rf = d.querySelector('[data-refuse]');
-      if (rf) rf.addEventListener('click', function () {
-        if (!confirm('Refuser et supprimer la demande de ' + u.login + ' ?')) return;
-        rpc('admin_refuser_demande', { p_token: TOKEN, p_login: u.login }).then(function () { d.close(); renderAdmin(); }).catch(err);
-      });
-    }
-
-    function modalTech() {
-      var d = dlg('<h2 style="margin-top:0">Créer des comptes techniciens</h2>' +
-        '<p class="sub">Coche les sociétés à importer. Un compte non validé (lecteur N2) ' +
-        'est créé pour chaque technicien avec une adresse e-mail et sans compte.</p>' +
-        '<div id="t-liste" class="sub">Analyse…</div>' +
-        '<p class="err" id="t-err"></p>' +
-        '<div style="margin-top:12px;text-align:right"><button data-x>Fermer</button> ' +
-        '<button class="primary" id="t-go" disabled>Créer</button></div>');
-      var go = $('#t-go', d), groupes = [];
-      function ids() {
-        return [].map.call(d.querySelectorAll('[data-g]:checked'), function (c) { return c.getAttribute('data-g'); });
-      }
-      function recalc() {
-        var n = ids().reduce(function (s, id) {
-          var g = groupes.filter(function (x) { return String(x.tiers_id || '') === id; })[0];
-          return s + (g ? g.a_creer : 0);
-        }, 0);
-        go.disabled = !n;
-        go.textContent = n ? ('Créer ' + n + ' compte(s)') : 'Créer';
-      }
-      rpc('admin_techniciens_groupes', { p_token: TOKEN }).then(function (rows) {
-        groupes = rows || [];
-        if (!groupes.length) { $('#t-liste', d).textContent = 'Aucun technicien référencé.'; return; }
-        $('#t-liste', d).innerHTML =
-          '<table style="margin-top:6px"><thead><tr><th></th><th>Société</th>' +
-          '<th style="text-align:center">À créer</th><th style="text-align:center">Déjà</th>' +
-          '<th style="text-align:center">Sans e-mail</th></tr></thead><tbody>' +
-          groupes.map(function (g) {
-            var ok = g.a_creer > 0;
-            return '<tr><td><input type="checkbox" data-g="' + esc(String(g.tiers_id || '')) + '"' +
-              (ok ? '' : ' disabled') + ' style="width:auto"></td><td>' + esc(g.societe) + '</td>' +
-              '<td style="text-align:center">' + (ok ? '<b>' + g.a_creer + '</b>' : '0') + '</td>' +
-              '<td style="text-align:center">' + g.deja + '</td>' +
-              '<td style="text-align:center">' + g.sans_email + '</td></tr>';
-          }).join('') + '</tbody></table>';
-        d.querySelectorAll('[data-g]').forEach(function (c) { c.addEventListener('change', recalc); });
-      }).catch(function (e) { $('#t-liste', d).textContent = e.message; });
-      go.addEventListener('click', function () {
-        var g = ids(); if (!g.length) return;
-        go.disabled = true; $('#t-err', d).textContent = '';
-        rpc('admin_creer_comptes_techniciens', { p_token: TOKEN, p_groupes: g, p_dry_run: false })
-          .then(function () { d.close(); renderAdmin(); })
-          .catch(function (e) { $('#t-err', d).textContent = e.message; go.disabled = false; });
-      });
-    }
-
-    function renderApps() {
-      var host = $('#adminApps');
-      host.innerHTML = '<div class="tablewrap"><table><thead><tr><th>Code</th><th>Libellé</th><th>URL</th>' +
-        '<th>Ouvert&nbsp;défaut</th><th title="Consomme le relais de session ?h=">Relais</th><th>Actif</th></tr></thead><tbody>' +
-        APPS_.map(function (a) {
-          return '<tr data-k="' + esc(a.code) + '"><td><code>' + esc(a.code) + '</code></td>' +
-            '<td><input data-c="libelle" value="' + esc(a.libelle) + '"></td>' +
-            '<td><input data-c="url" value="' + esc(a.url || '') + '"></td>' +
-            '<td style="text-align:center"><input type="checkbox" data-c="ouvert_par_defaut" style="width:auto"' + (a.ouvert_par_defaut ? ' checked' : '') + '></td>' +
-            '<td style="text-align:center"><input type="checkbox" data-c="relais" style="width:auto"' + (a.relais ? ' checked' : '') + '></td>' +
-            '<td style="text-align:center"><input type="checkbox" data-c="actif" style="width:auto"' + (a.actif ? ' checked' : '') + '></td></tr>';
-        }).join('') + '</tbody></table></div>' +
-        '<div class="row" style="margin-top:8px;gap:8px"><input id="na-code" placeholder="CODE" style="max-width:120px">' +
-        '<input id="na-lib" placeholder="Libellé" style="max-width:220px">' +
-        '<button class="small" id="na-add">+ Ajouter</button>' +
-        '<span style="flex:1"></span><button class="small primary" id="a-save">Enregistrer</button></div>';
-      $('#a-save', host).addEventListener('click', function () {
-        var byK = {};
-        host.querySelectorAll('[data-k] [data-c]').forEach(function (el) {
-          var k = el.closest('[data-k]').getAttribute('data-k'), c = el.getAttribute('data-c');
-          (byK[k] = byK[k] || {})[c] = (el.type === 'checkbox') ? el.checked : el.value;
-        });
-        var codes = Object.keys(byK);
-        setStatus('Enregistrement…');
-        Promise.all(codes.map(function (k) {
-          return rpc('admin_maj_application', { p_token: TOKEN, p_code: k, p_donnees: byK[k] });
-        })).then(function () { setStatus(''); renderAdmin(); }).catch(function (e) { setStatus(''); alert(e.message); });
-      });
-      $('#na-add', host).addEventListener('click', function () {
-        var code = ($('#na-code', host).value || '').trim().toUpperCase();
-        if (!code) return;
-        rpc('admin_maj_application', { p_token: TOKEN, p_code: code, p_donnees: { libelle: $('#na-lib', host).value || code } })
-          .then(renderAdmin).catch(function (e) { alert(e.message); });
-      });
-    }
-
-    /* ---------- démarrage : relais éventuel puis session ---------- */
-    (function start() {
-      var h = new URLSearchParams(location.search).get('h');
-      if (h) {
-        history.replaceState(null, '', location.pathname);
-        setStatus('Connexion…');
-        rpc('echanger_relais', { p_code: h, p_app: APP, p_ua: UA }).then(finalise).catch(function () {
-          setStatus(''); boot();
-        });
-        return;
-      }
-      boot();
-    })();
-  })();
-  </script>
-</body>
-</html>
+        <h2>❓ Troubleshooting Tips</h2>
+        <ul>
+            <li><strong>I can't find the download button:</strong> Visit the link again and look for a green "Code" dropdown button. Under it, you'll see "Download ZIP" — that's the easiest option.</li>
+            <li><strong>Windows SmartScreen warning:</strong> If Microsoft SmartScreen gives a
